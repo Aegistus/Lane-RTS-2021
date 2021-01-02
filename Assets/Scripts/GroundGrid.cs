@@ -25,7 +25,6 @@ public class GroundGrid : MonoBehaviour
     public float tileSize = 1f;
 
     private GroundTile[,] tiles;
-    private GameObject tileParent;
 
     private void Start()
     {
@@ -35,15 +34,14 @@ public class GroundGrid : MonoBehaviour
 
     private void CreateGrid(int xLength, int zLength)
     {
-        tileParent = new GameObject("Tiles");
         tiles = new GroundTile[xLength, zLength];
         for (int x = 0; x < xLength; x++)
         {
             for (int z = 0; z < zLength; z++)
             {
                 tiles[x, z] = new GameObject().AddComponent<GroundTile>();
-                tiles[x, z].transform.position = new Vector3(gridMiddle.x - (xLength * tileSize / 2) + (x * tileSize), gridMiddle.y, gridMiddle.z - (zLength * tileSize / 2) + (z * tileSize));
-                tiles[x, z].transform.parent = tileParent.transform;
+                tiles[x, z].transform.position = new Vector3(gridMiddle.x - (xLength * tileSize / 2) + (x * tileSize) + tileSize / 2, gridMiddle.y, gridMiddle.z - (zLength * tileSize / 2) + (z * tileSize) + tileSize / 2);
+                tiles[x, z].transform.parent = transform;
                 tiles[x, z].SetOccupied(true);
             }
         }
