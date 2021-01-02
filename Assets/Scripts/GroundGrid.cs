@@ -24,23 +24,50 @@ public class GroundGrid : MonoBehaviour
     public Vector3 gridMiddle;
     public float tileSize = 1f;
 
-    private bool[,] tileOccupationStatus;
+    private GroundTile[,] tiles;
+    private GameObject tileParent;
 
     private void Start()
     {
         CreateGrid(xLength, zLength);
+        OccupyTile(gridMiddle);
     }
 
     private void CreateGrid(int xLength, int zLength)
     {
-        tileOccupationStatus = new bool[xLength, zLength];
+        tileParent = new GameObject("Tiles");
+        tiles = new GroundTile[xLength, zLength];
+        for (int x = 0; x < xLength; x++)
+        {
+            for (int z = 0; z < zLength; z++)
+            {
+                tiles[x, z] = new GameObject().AddComponent<GroundTile>();
+                tiles[x, z].transform.position = new Vector3(gridMiddle.x - (xLength * tileSize / 2) + (x * tileSize), gridMiddle.y, gridMiddle.z - (zLength * tileSize / 2) + (z * tileSize));
+                tiles[x, z].transform.parent = tileParent.transform;
+                tiles[x, z].SetOccupied(true);
+            }
+        }
     }
 
     public void OccupyTile(Vector3 position)
     {
-        int xCoord = (int)((gridMiddle.x - position.x) / tileSize);
-        int zCoord = (int)((gridMiddle.z - position.z) / tileSize);
-        tileOccupationStatus[xCoord, zCoord] = true;
+        int xCoord = Mathf.RoundToInt((gridMiddle.x - position.x) / tileSize);
+        int zCoord = Mathf.RoundToInt((gridMiddle.z - position.z) / tileSize);
+        tiles[xCoord, zCoord].SetOccupied(true);
+    }
+
+    public void DeOccupyTile(Vector3 position)
+    {
+        int xCoord = Mathf.RoundToInt((gridMiddle.x - position.x) / tileSize);
+        int zCoord = Mathf.RoundToInt((gridMiddle.z - position.z) / tileSize);
+        tiles[xCoord, zCoord].SetOccupied(false);
+    }
+
+    public bool CheckTileOccupancy(Vector3 position)
+    {
+        int xCoord = Mathf.RoundToInt((gridMiddle.x - position.x) / tileSize);
+        int zCoord = Mathf.RoundToInt((gridMiddle.z - position.z) / tileSize);
+        return tiles[xCoord, zCoord].Occupied;
     }
 
     private void OnDrawGizmos()
