@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 public class Selectable : MonoBehaviour
 {
+    public event Action<bool> OnSelectionStatusChange;
+
     public bool Selected { get; private set; }
 
     private Camera mainCam;
@@ -52,15 +55,9 @@ public class Selectable : MonoBehaviour
     // postcondition: selected is set to true, selection markers are activated.
     public void Select(GameObject toSelect)
     {
-        if (toSelect == this.gameObject)
+        if (toSelect == gameObject)
         {
-            Selected = true;
-            // activates selection markers
-            foreach (GameObject marker in selectionMarkers)
-            {
-                marker.SetActive(true);
-            }
-            SelectListeners();
+            Select();
         }
     }
 
@@ -73,22 +70,16 @@ public class Selectable : MonoBehaviour
         {
             marker.SetActive(true);
         }
-        SelectListeners();
+        OnSelectionStatusChange?.Invoke(Selected);
     }
 
     // precondition: unit is not selected.
     // postcondition: selected is set to false, selection markers are deactivated.
     public void Deselect(GameObject toDeselect)
     {
-        if (toDeselect == this.gameObject)
+        if (toDeselect == gameObject)
         {
-            Selected = false;
-            // deactivates selection markers
-            foreach (GameObject marker in selectionMarkers)
-            {
-                marker.SetActive(false);
-            }
-            DeselectListeners();
+            Deselect();
         }
     }
 
@@ -101,19 +92,7 @@ public class Selectable : MonoBehaviour
         {
             marker.SetActive(false);
         }
-        DeselectListeners();
-    }
-
-    // Helper method to manage subscriptions. For when Selected == true.
-    private void SelectListeners()
-    {
-
-    }
-
-    // Helper method to manage subscriptions. For when Selected == false.
-    private void DeselectListeners()
-    {
-
+        OnSelectionStatusChange?.Invoke(Selected);
     }
 
     // unsubscribes from all events. REQUIRED TO AVOID MEMORY LEAKS.

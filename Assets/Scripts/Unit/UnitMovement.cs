@@ -8,8 +8,14 @@ public class UnitMovement : MonoBehaviour
 	Vector3[] path;
 	int targetIndex;
 
-	void Start()
-	{
+    void Start()
+    {
+		target.parent = null;
+    }
+
+    public void SetDestination(Vector3 position)
+    {
+		target.position = position;
 		PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
 	}
 
