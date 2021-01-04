@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
-
 	public bool displayGridGizmos;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
@@ -127,5 +126,10 @@ public class Grid : MonoBehaviour
 		public int terrainPenalty;
 	}
 
+	public void SetNodeWalkable(Vector3 position, bool walkable)
+    {
+		Node node = NodeFromWorldPoint(position);
+		node.walkable = walkable;
+    }
 
 }
