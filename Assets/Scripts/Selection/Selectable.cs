@@ -35,11 +35,11 @@ public class Selectable : MonoBehaviour
     //                      otherwise, Deselect() (if ctrl is not held down)
     public void CheckBoxLocation(Rect selectBox)
     {
-        if (selectBox.Contains(mainCam.WorldToViewportPoint(transform.position), true) && !Selected)
+        if (selectBox.Contains(mainCam.WorldToScreenPoint(transform.position), true) && !Selected)
         {
             Select();
         }
-        else if (!selectBox.Contains(mainCam.WorldToViewportPoint(transform.position), true) && Selected)
+        else if (!selectBox.Contains(mainCam.WorldToScreenPoint(transform.position), true) && Selected)
         {
             if (!Input.GetKey("left ctrl"))
             {
