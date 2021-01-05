@@ -19,13 +19,20 @@ public class OrderManager : MonoBehaviour
     }
 
     private List<OrderReceiver> orderListeners = new List<OrderReceiver>();
+    private Grid grid;
+
+    private void Start()
+    {
+        grid = (Grid)FindObjectOfType(typeof(Grid));
+    }
 
     private void Update()
     {
         if (Input.GetMouseButtonUp(1))
         {
             Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit rayHit);
-            IssueOrder(rayHit.point);
+            Vector3 tileLocation = grid.NodeFromWorldPoint(rayHit.point).worldPosition;
+            IssueOrder(tileLocation);
         }
     }
 

@@ -5,6 +5,7 @@ public class UnitMovement : MonoBehaviour
 {
 	public Transform target;
 	public float speed = 10;
+	Vector3 destination;
 	Vector3[] path;
 	int targetIndex;
 
@@ -16,6 +17,7 @@ public class UnitMovement : MonoBehaviour
     public void SetDestination(Vector3 position)
     {
 		target.position = position;
+		destination = position;
 		PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
 	}
 
@@ -23,7 +25,12 @@ public class UnitMovement : MonoBehaviour
 	{
 		if (pathSuccessful)
 		{
-			path = newPath;
+			path = new Vector3[newPath.Length + 1];
+            for (int i = 0; i < newPath.Length; i++)
+            {
+				path[i] = newPath[i];
+            }
+			path[path.Length - 1] = destination;
 			targetIndex = 0;
 			StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
@@ -32,23 +39,26 @@ public class UnitMovement : MonoBehaviour
 
 	IEnumerator FollowPath()
 	{
-		Vector3 currentWaypoint = path[0];
+		if (path.Length > 0)
+        {
+			Vector3 currentWaypoint = path[0];
 
-		while (true)
-		{
-			if (transform.position == currentWaypoint)
+			while (true)
 			{
-				targetIndex++;
-				if (targetIndex >= path.Length)
+				if (transform.position == currentWaypoint)
 				{
-					yield break;
+					targetIndex++;
+					if (targetIndex >= path.Length)
+					{
+						//transform.position = target.position; // added bc unit stops right before destination for some reason?
+						yield break;
+					}
+					currentWaypoint = path[targetIndex];
 				}
-				currentWaypoint = path[targetIndex];
+
+				transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+				yield return null;
 			}
-
-			transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-			yield return null;
-
 		}
 	}
 
